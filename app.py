@@ -21,8 +21,6 @@ from sklearn.metrics import (
 )
 
 # ---------------------------
-# PAGE CONFIG
-# ---------------------------
 st.set_page_config(
     page_title="Crop Recommendation System",
     layout="wide"
@@ -31,8 +29,7 @@ st.set_page_config(
 st.title("🌾 Crop Recommendation System")
 st.write("Crop Prediction using Multiple Machine Learning Algorithms")
 
-# ---------------------------
-# LOAD DATASET
+
 # ---------------------------
 df = pd.read_csv("Crop_recommendationV2.csv")
 
@@ -44,21 +41,16 @@ st.write("Missing Values")
 st.dataframe(df.isnull().sum())
 
 # ---------------------------
-# TARGET
-# ---------------------------
 target = "label"
 
 X = df.drop(columns=[target])
 y = df[target]
 
 # ---------------------------
-# ENCODE TARGET
-# ---------------------------
 target_encoder = LabelEncoder()
 y_encoded = target_encoder.fit_transform(y)
 
-# ---------------------------
-# COLUMN TYPES
+
 # ---------------------------
 numeric_features = X.select_dtypes(
     include=["int64", "float64"]
@@ -68,8 +60,7 @@ categorical_features = X.select_dtypes(
     include=["object"]
 ).columns.tolist()
 
-# ---------------------------
-# PREPROCESSOR
+
 # ---------------------------
 preprocessor = ColumnTransformer(
     transformers=[
@@ -101,16 +92,13 @@ for col in categorical_features:
     le = LabelEncoder()
     X[col] = le.fit_transform(X[col].astype(str))
 
-# ---------------------------
-# FILL MISSING NUMERIC VALUES
+
 # ---------------------------
 num_imputer = SimpleImputer(strategy="mean")
 X[numeric_features] = num_imputer.fit_transform(
     X[numeric_features]
 )
 
-# ---------------------------
-# TRAIN TEST SPLIT
 # ---------------------------
 X_train, X_test, y_train, y_test = train_test_split(
     X,
@@ -120,8 +108,6 @@ X_train, X_test, y_train, y_test = train_test_split(
     stratify=y_encoded
 )
 
-# ---------------------------
-# MODELS
 # ---------------------------
 models = {
 
@@ -154,8 +140,6 @@ models = {
         )
 }
 
-# ---------------------------
-# TRAIN MODELS
 # ---------------------------
 results = {}
 
@@ -202,9 +186,7 @@ for name, model in models.items():
         "Sample Predictions:",
         sample_preds
     )
-
-# ---------------------------
-# BEST MODEL
+    
 # ---------------------------
 best_model_name = max(
     results,
@@ -218,8 +200,7 @@ st.success(
     f"(Accuracy = {results[best_model_name]['accuracy']:.4f})"
 )
 
-# ---------------------------
-# CLASSIFICATION REPORT
+
 # ---------------------------
 best_predictions = results[
     best_model_name
@@ -236,8 +217,7 @@ report = classification_report(
 
 st.text(report)
 
-# ---------------------------
-# USER INPUT
+
 # ---------------------------
 st.header("Predict Crop")
 
@@ -272,8 +252,7 @@ for column in X.columns:
             [selected]
         )[0]
 
-# ---------------------------
-# PREDICTION
+
 # ---------------------------
 if st.button("Predict Crop"):
 
